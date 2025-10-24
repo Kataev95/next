@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Next - Анонимный Чат</title>
+    <style>
+        :root {
+            --color-neon-cyan: #00ffff;
+            --color-neon-pink: #ff00ff;
+            --color-neon-purple: #b300ff;
+            --color-neon-blue: #0088ff;
+            --color-neon-green: #00ff88;
+            --color-dark-bg: #0a0a0f;
+            --color-dark-surface: #15151f;
+            --color-dark-card: #1a1a28;
+            --color-text-neon: #e0e0ff;
+            --color-text-dim: #8888aa;
+            
+            --color-background: var(--color-dark-bg);
+            --color-surface: var(--color-dark-surface);
+            --color-text: var(--color-text-neon);
+            --color-text-secondary: var(--color-text-dim);
+            --color-primary: var(--color-neon-cyan);
+            --color-primary-hover: var(--color-neon-blue);
+            --color-primary-active: var(--color-neon-purple);
+            --color-secondary: rgba(0, 255, 255, 0.1);
+            --color-border: rgba(0, 255, 255, 0.3);
+            --color-btn-primary-text: #0a0a0f;
+            --color-card-border: rgba(0, 255, 255, 0.2);
+            --color-focus-ring: rgba(0, 255, 255, 0.5);
+            
+            --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 0 10px rgba(0, 255, 255, 0.2);
+            --shadow-md: 0 0 20px rgba(0, 255, 255, 0.3);
+            --shadow-neon: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background: linear-gradient(135deg, #0a0a0f 0%, #15151f 50%, #1a1028 100%);
+            color: var(--color-text);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background-color: var(--color-surface);
+            border-bottom: 2px solid var(--color-primary);
+            padding: 16px 24px;
+            box-shadow: var(--shadow-neon);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+            text-shadow: 0 0 10px var(--color-primary), 0 0 20px var(--color-primary);
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .online-count {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-neon-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--color-neon-green);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 24px;
+        }
+
+        .login-card {
+            background-color: var(--color-surface);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-neon);
+        }
+
+        .login-card h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--color-text);
+        }
+
+        .login-card p {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--color-text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-focus-ring), 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-btn-primary-text);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+        }
+
+        .btn-primary:active {
+            background-color: var(--color-primary-active);
+        }
+
+        .chat-screen {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .chat-screen.active {
+            display: flex;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-neon-cyan), var(--color-neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .message-content {
+            flex: 1;
+            max-width: 70%;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .message.own .message-header {
+            flex-direction: row-reverse;
+        }
+
+        .message-nickname {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--color-text);
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        .message-text {
+            background-color: var(--color-surface);
+            padding: 12px 16px;
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-card-border);
+            font-size: 15px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message.own .message-text {
+            background-color: var(--color-primary);
+            color: var(--color-btn-primary-text);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .message-reply {
+            background-color: var(--color-secondary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            border-left: 3px solid var(--color-primary);
+            cursor: pointer;
+        }
+
+        .message-reply:hover {
+            opacity: 0.8;
+        }
+
+        .reply-nickname {
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+        }
+
+        .reply-text {
+            color: var(--color-text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .message-mention {
+            color: var(--color-primary);
+            font-weight: 600;
+            background-color: var(--color-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .message-mention:hover {
+            background-color: var(--color-primary);
+            color: var(--color-btn-primary-text);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .media-preview {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: var(--radius-base);
+            margin-top: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .media-preview:hover {
+            transform: scale(1.02);
+        }
+
+        .media-preview img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius-base);
+        }
+
+        .voice-message {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: var(--color-secondary);
+            border-radius: var(--radius-base);
+            margin-top: 8px;
+        }
+
+        .voice-play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-btn-primary-text);
+            font-size: 16px;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .voice-play-btn:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .voice-waveform {
+            flex: 1;
+            height: 32px;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary) 60%, var(--color-border) 60%, var(--color-border) 100%);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .voice-duration {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+
+        .reply-indicator {
+            background-color: var(--color-secondary);
+            padding: 8px 16px;
+            border-left: 3px solid var(--color-primary);
+            font-size: 13px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .reply-indicator.active {
+            display: flex;
+        }
+
+        .reply-cancel {
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 8px;
+        }
+
+        .reply-cancel:hover {
+            color: var(--color-text);
+        }
+
+        .input-container {
+            background-color: var(--color-surface);
+            border-top: 1px solid var(--color-card-border);
+            padding: 16px 24px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .message-input-wrapper {
+            flex: 1;
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            resize: none;
+            max-height: 120px;
+            font-family: var(--font-family-base);
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-focus-ring);
+        }
+
+        .btn-send {
+            padding: 12px 24px;
+            background-color: var(--color-primary);
+            color: var(--color-btn-primary-text);
+            border: none;
+            border-radius: var(--radius-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .btn-send:hover {
+            background-color: var(--color-primary-hover);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .system-message {
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 13px;
+            padding: 8px;
+            margin: 8px 0;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .messages-container {
+                padding: 16px;
+            }
+
+            .input-container {
+                padding: 12px 16px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>The Next</h1>
+            <div class="header-info">
+                <div class="online-count">
+                    <span class="online-dot"></span>
+                    <span id="onlineCount">1 онлайн</span>
+                </div>
+                <span id="userNickname"></span>
+            </div>
+        </div>
+
+        <div class="login-screen" id="loginScreen">
+            <div class="login-card">
+                <h2>Добро пожаловать в The Next</h2>
+                <p>Введите ваш никнейм для входа в анонимный чат</p>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="nicknameInput">Никнейм</label>
+                        <input 
+                            type="text" 
+                            id="nicknameInput" 
+                            class="form-input" 
+                            placeholder="Введите ваш никнейм"
+                            maxlength="20"
+                            required
+                        >
+                        <div class="error-message" id="nicknameError"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Войти в чат</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="chat-screen" id="chatScreen">
+            <div class="messages-container" id="messagesContainer">
+                <div class="system-message">
+                    Добро пожаловать в анонимный чат The Next! Будьте вежливы и уважайте других участников.
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="reply-indicator" id="replyIndicator">
+                    <div>
+                        <div class="reply-nickname" id="replyNickname"></div>
+                        <div class="reply-text" id="replyText"></div>
+                    </div>
+                    <button class="reply-cancel" id="replyCancel">✕</button>
+                </div>
+                <div style="display: flex; gap: 8px; width: 100%;">
+                    <input type="file" id="fileInput" accept="image/*,video/*" style="display: none;">
+                    <button class="btn-send" id="attachButton" style="padding: 12px; flex-shrink: 0;" title="Прикрепить медиа">📎</button>
+                    <button class="btn-send" id="voiceButton" style="padding: 12px; flex-shrink: 0;" title="Голосовое сообщение">🎤</button>
+                    <div class="message-input-wrapper" style="flex: 1;">
+                        <textarea 
+                            id="messageInput" 
+                            class="message-input" 
+                            placeholder="Напишите сообщение или @никнейм..."
+                            rows="1"
+                        ></textarea>
+                    </div>
+                    <button class="btn-send" id="sendButton">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginScreen = document.getElementById('loginScreen');
+        const chatScreen = document.getElementById('chatScreen');
+        const loginForm = document.getElementById('loginForm');
+        const nicknameInput = document.getElementById('nicknameInput');
+        const nicknameError = document.getElementById('nicknameError');
+        const userNicknameDisplay = document.getElementById('userNickname');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const onlineCountDisplay = document.getElementById('onlineCount');
+
+        let currentUser = {
+            nickname: '',
+            color: ''
+        };
+
+        const messages = [];
+        let onlineUsers = 1;
+        let replyingTo = null;
+        let isRecording = false;
+        let recordingStartTime = 0;
+
+        const userColors = [
+            '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', 
+            '#10b981', '#06b6d4', '#6366f1', '#84cc16'
+        ];
+
+        function getRandomColor() {
+            return userColors[Math.floor(Math.random() * userColors.length)];
+        }
+
+        function getInitials(nickname) {
+            return nickname.charAt(0).toUpperCase();
+        }
+
+        function formatTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nickname = nicknameInput.value.trim();
+
+            if (nickname.length < 2) {
+                nicknameError.textContent = 'Никнейм должен содержать минимум 2 символа';
+                return;
+            }
+
+            if (nickname.length > 20) {
+                nicknameError.textContent = 'Никнейм не должен превышать 20 символов';
+                return;
+            }
+
+            currentUser.nickname = nickname;
+            currentUser.color = getRandomColor();
+            nicknameError.textContent = '';
+
+            loginScreen.style.display = 'none';
+            chatScreen.classList.add('active');
+            userNicknameDisplay.textContent = `Вы: ${nickname}`;
+
+            addSystemMessage(`${nickname} присоединился к чату`);
+            messageInput.focus();
+            updateOnlineCount();
+        });
+
+        function addSystemMessage(text) {
+            const systemMsg = document.createElement('div');
+            systemMsg.className = 'system-message';
+            systemMsg.textContent = text;
+            messagesContainer.appendChild(systemMsg);
+            scrollToBottom();
+        }
+
+        function addMessage(nickname, text, isOwn = false, options = {}) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message${isOwn ? ' own' : ''}`;
+            messageDiv.dataset.messageId = messages.length;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = getInitials(nickname);
+            if (!isOwn) {
+                avatar.style.background = `linear-gradient(135deg, ${getRandomColor()}, ${getRandomColor()})`;
+            }
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'message-header';
+
+            const nicknameSpan = document.createElement('span');
+            nicknameSpan.className = 'message-nickname';
+            nicknameSpan.textContent = nickname;
+
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'message-time';
+            timeSpan.textContent = formatTime(new Date());
+
+            headerDiv.appendChild(nicknameSpan);
+            headerDiv.appendChild(timeSpan);
+
+            if (options.replyTo) {
+                const replyDiv = document.createElement('div');
+                replyDiv.className = 'message-reply';
+                replyDiv.innerHTML = `
+                    <div class="reply-nickname">${options.replyTo.nickname}</div>
+                    <div class="reply-text">${options.replyTo.text}</div>
+                `;
+                replyDiv.addEventListener('click', () => {
+                    const targetMsg = document.querySelector(`[data-message-id="${options.replyTo.id}"]`);
+                    if (targetMsg) {
+                        targetMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetMsg.style.backgroundColor = 'var(--color-secondary)';
+                        setTimeout(() => {
+                            targetMsg.style.backgroundColor = '';
+                        }, 1000);
+                    }
+                });
+                contentDiv.appendChild(headerDiv);
+                contentDiv.appendChild(replyDiv);
+            } else {
+                contentDiv.appendChild(headerDiv);
+            }
+
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.innerHTML = parseMentions(text);
+
+            if (options.media) {
+                const mediaDiv = document.createElement('div');
+                mediaDiv.className = 'media-preview';
+                const img = document.createElement('img');
+                img.src = options.media;
+                img.alt = 'Медиа';
+                mediaDiv.appendChild(img);
+                textDiv.appendChild(mediaDiv);
+            }
+
+            if (options.voice) {
+                const voiceDiv = document.createElement('div');
+                voiceDiv.className = 'voice-message';
+                voiceDiv.innerHTML = `
+                    <button class="voice-play-btn">▶</button>
+                    <div class="voice-waveform"></div>
+                    <span class="voice-duration">${options.voice.duration}</span>
+                `;
+                voiceDiv.querySelector('.voice-play-btn').addEventListener('click', function() {
+                    if (this.textContent === '▶') {
+                        this.textContent = '⏸';
+                        setTimeout(() => {
+                            this.textContent = '▶';
+                        }, options.voice.duration * 1000);
+                    } else {
+                        this.textContent = '▶';
+                    }
+                });
+                textDiv.appendChild(voiceDiv);
+            }
+
+            contentDiv.appendChild(textDiv);
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+
+            messageDiv.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                setReplyTo({ id: messages.length, nickname, text });
+            });
+
+            messagesContainer.appendChild(messageDiv);
+            scrollToBottom();
+
+            messages.push({ nickname, text, time: new Date(), isOwn, ...options });
+        }
+
+        function parseMentions(text) {
+            return text.replace(/@(\w+)/g, '<span class="message-mention">@$1</span>');
+        }
+
+        function setReplyTo(messageData) {
+            replyingTo = messageData;
+            document.getElementById('replyIndicator').classList.add('active');
+            document.getElementById('replyNickname').textContent = messageData.nickname;
+            document.getElementById('replyText').textContent = messageData.text;
+            messageInput.focus();
+        }
+
+        function cancelReply() {
+            replyingTo = null;
+            document.getElementById('replyIndicator').classList.remove('active');
+        }
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+
+            if (text.length === 0) {
+                return;
+            }
+
+            if (text.length > 1000) {
+                alert('Сообщение слишком длинное (максимум 1000 символов)');
+                return;
+            }
+
+            const options = {};
+            if (replyingTo) {
+                options.replyTo = replyingTo;
+            }
+
+            addMessage(currentUser.nickname, text, true, options);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            cancelReply();
+
+            simulateResponse(text);
+        }
+
+        function simulateResponse(originalMessage) {
+            const demoResponses = [
+                'Интересно! Расскажи подробнее',
+                'Согласен, хорошая мысль',
+                'А я думаю иначе...',
+                'Поддерживаю!',
+                'Круто! 🔥',
+                'Надо обсудить это в основной группе',
+                'Кто-нибудь еще в The Next?',
+                'Отличная идея!',
+            ];
+
+            setTimeout(() => {
+                const randomNicknames = ['Анонимус', 'NextUser', 'Гость', 'Участник', 'Пользователь'];
+                const randomNick = randomNicknames[Math.floor(Math.random() * randomNicknames.length)];
+                const randomResponse = demoResponses[Math.floor(Math.random() * demoResponses.length)];
+                
+                addMessage(randomNick, randomResponse, false);
+                
+                onlineUsers = Math.floor(Math.random() * 10) + 1;
+                updateOnlineCount();
+            }, 1000 + Math.random() * 2000);
+        }
+
+        function updateOnlineCount() {
+            onlineCountDisplay.textContent = `${onlineUsers} онлайн`;
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        document.getElementById('replyCancel').addEventListener('click', cancelReply);
+
+        document.getElementById('attachButton').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const options = { media: event.target.result };
+                    if (replyingTo) {
+                        options.replyTo = replyingTo;
+                    }
+                    addMessage(currentUser.nickname, messageInput.value.trim() || '📷 Фото', true, options);
+                    messageInput.value = '';
+                    cancelReply();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('voiceButton').addEventListener('click', function() {
+            if (!isRecording) {
+                isRecording = true;
+                recordingStartTime = Date.now();
+                this.style.backgroundColor = '#ef4444';
+                this.textContent = '⏹';
+            } else {
+                isRecording = false;
+                const duration = Math.floor((Date.now() - recordingStartTime) / 1000);
+                this.style.backgroundColor = '';
+                this.textContent = '🎤';
+                
+                const options = { voice: { duration: `0:${duration.toString().padStart(2, '0')}` } };
+                if (replyingTo) {
+                    options.replyTo = replyingTo;
+                }
+                addMessage(currentUser.nickname, '🎤 Голосовое сообщение', true, options);
+                cancelReply();
+            }
+        });
+
+        nicknameInput.focus();
+    </script>
+</body>
+</html>
